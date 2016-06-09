@@ -6,15 +6,20 @@ import Title from './Title.js';
 import Background from './Background.js';
 import PrevButton from './PrevButton.js';
 import NextButton from './NextButton.js';
+import SaveCanvas from './SaveCanvas.js';
 import LeftPageText from './LeftPageText.js';
 import RightPageText from './RightPageText.js';
 import LeftPageImage from './LeftPageImage.js';
 import RightPageImage from './RightPageImage.js';
+import NotesCarousel from './NotesCarousel.js';
 import WebCam from './WebCam.js';
 import Canvas from './Canvas.jsx';
 import socket from '../../websocket.js';
 import $ from 'jquery';
 import Chatbox from './Chatbox.js';
+import html2canvas from 'html2canvas';
+
+
 
 class App extends Component {
   constructor(props) {
@@ -82,6 +87,21 @@ class App extends Component {
     }
   }
 
+
+ onClickSnapshot() {
+    var button = document.getElementById('btn-download');
+    var data = document.getElementById('canvas').toDataURL('image/png');
+    button.href = data;
+    button.download = 'snapshot1.png';
+    console.log(data);
+    
+    $.post('api/images', {time: Date.now(), img: data}, function(data, status) {
+      console.log('>Data<<<<<<: ', data);
+      console.log('>Status<<<<<<: ', status);
+    });
+  }
+
+
   changeText(event) {
     this.setState ({msg: event.msg});
   }
@@ -96,9 +116,12 @@ class App extends Component {
             <div id='buttons-with-book'>
               <div id='center'><Background />
               <Chatbox />
+              <NotesCarousel />
+              <div id='left-button'><SaveCanvas clickHandler={this.onClickSnapshot}/></div>
               </div>
             </div>
             <Canvas />
+
           </div>
         );
   } else {
